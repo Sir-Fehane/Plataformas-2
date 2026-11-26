@@ -6,6 +6,7 @@ public class TitleClass : MonoBehaviour
     public void botonNewGame()
     {
         PlayerPrefs.SetInt("current_progress", 0);
+        PlayerPrefs.SetInt("player_lives", 5);
         SceneManager.LoadScene(1);
     }
 

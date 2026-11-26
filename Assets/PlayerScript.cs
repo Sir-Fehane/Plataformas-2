@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.Video;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class PlayerScript : MonoBehaviour
     bool control;
     bool water;
 
+    int vidas;
+    int corazones;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -34,8 +38,12 @@ public class PlayerScript : MonoBehaviour
         num_manzanas = 0;
 
         timer = Time.time;
-        level_timer = 100;
+        level_timer = 250;
         textTimer.SetText("" + level_timer);
+
+        vidas = PlayerPrefs.GetInt("player_lives", 5);
+        corazones = 3;
+        
     }
 
     // Update is called once per frame
@@ -49,22 +57,7 @@ public class PlayerScript : MonoBehaviour
 
             if (level_timer == 0)
             {
-                int level_select = PlayerPrefs.GetInt("level_select");
-                switch(level_select)
-                {
-                    case 1:
-                    SceneManager.LoadScene(2);
-                break;
-                case 2:
-                    SceneManager.LoadScene(3);
-                break;
-                case 3:
-                    SceneManager.LoadScene(4);
-                break;
-                case 4:
-                    SceneManager.LoadScene(5);
-                break;
-                }
+                animator.SetTrigger("delete");
             }
             timer++;
         }
@@ -170,7 +163,24 @@ public class PlayerScript : MonoBehaviour
         if (collision.gameObject.tag == "Apple")
         {
             num_manzanas++;
+            
+            if (num_manzanas == 5)
+            {
+                PlayerPrefs.SetInt("player_lives", PlayerPrefs.GetInt("player_lives") + 1);
+                num_manzanas = 0;
+            }
+          
             textManzanas.SetText("" + num_manzanas);
+            Destroy(collision.gameObject);
+        }
+
+        if (collision.gameObject.tag == "Strawberry")
+        {
+            if(corazones < 3)
+            {
+                corazones++;
+            }
+
             Destroy(collision.gameObject);
         }
 
@@ -231,7 +241,27 @@ public class PlayerScript : MonoBehaviour
             }
             else
             {
-                animator.SetTrigger("delete");
+                corazones--;
+                if (corazones <= 0)
+                {
+                    animator.SetTrigger("delete");
+                }
+                else
+                {
+                    control = false;
+                    hit = true;
+                    animator.SetInteger("estado", 5);
+                    if (sprite.flipX)
+                    {
+                        rigidbody.linearVelocity =
+                        new Vector2(10f, 4f);
+                    }
+                    else
+                    {
+                        rigidbody.linearVelocity =
+                        new Vector2(-10f, 4f);
+                    }
+                }
             }
         }
 
@@ -258,6 +288,13 @@ public class PlayerScript : MonoBehaviour
                 rigidbody.linearVelocity = 
                 new Vector2(-10f, 4f);
             }
+
+            corazones--;
+            if (corazones <= 0)
+            {
+                animator.SetTrigger("delete");
+            }
+            
         }
     }
 
@@ -279,21 +316,31 @@ public class PlayerScript : MonoBehaviour
 
     public void gotoDesapperearing()
     {
+        restarVida();
         int level_select = PlayerPrefs.GetInt("level_select");
-        switch(level_select)
+
+        if (PlayerPrefs.GetInt("player_lives") <= 0)
         {
-            case 1:
-                SceneManager.LoadScene(2);
-            break;
-            case 2:
-                SceneManager.LoadScene(3);
-            break;
-            case 3:
-                SceneManager.LoadScene(4);
-            break;
-            case 4:
-                SceneManager.LoadScene(5);
-            break;
+            SceneManager.LoadScene(6);
+
+        }
+        else
+        {
+            switch (level_select)
+            {
+                case 1:
+                    SceneManager.LoadScene(2);
+                    break;
+                case 2:
+                    SceneManager.LoadScene(3);
+                    break;
+                case 3:
+                    SceneManager.LoadScene(4);
+                    break;
+                case 4:
+                    SceneManager.LoadScene(5);
+                    break;
+            }
         }
         
     }
@@ -304,5 +351,10 @@ public class PlayerScript : MonoBehaviour
         hit = false;
 
         animator.SetInteger("estado", 0);
+    }
+
+    public void restarVida()
+    {
+        PlayerPrefs.SetInt("player_lives", PlayerPrefs.GetInt("player_lives") - 1);
     }
 }
