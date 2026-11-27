@@ -8,6 +8,9 @@ public class PlayerScript : MonoBehaviour
     public TextMeshProUGUI textTimer;
     public TextMeshProUGUI textVidas;
     public TextMeshProUGUI textCorazones;
+    public GameObject corazon1;
+    public GameObject corazon2;
+    public GameObject corazon3;
 
     float timer;
     int level_timer;
@@ -40,7 +43,14 @@ public class PlayerScript : MonoBehaviour
         num_manzanas = 0;
 
         timer = Time.time;
-        level_timer = 250;
+        if (SceneManager.GetActiveScene().name == "Bonus")
+        {
+            level_timer = 20;
+        }
+        else
+        {
+            level_timer = 250;
+        }
         if (textTimer != null) textTimer.SetText("" + level_timer);
 
         vidas = PlayerPrefs.GetInt("player_lives", 5);
@@ -60,7 +70,14 @@ public class PlayerScript : MonoBehaviour
 
             if (level_timer <= 0)
             {
-                animator.SetTrigger("delete");
+                if (SceneManager.GetActiveScene().name == "Bonus")
+                {
+                    SceneManager.LoadScene(1);
+                }
+                else
+                {
+                    animator.SetTrigger("delete");
+                }
             }
             timer++;
         }
@@ -390,5 +407,9 @@ public class PlayerScript : MonoBehaviour
         {
             textManzanas.SetText("" + num_manzanas);
         }
+
+        if (corazon1 != null) corazon1.SetActive(corazones >= 1);
+        if (corazon2 != null) corazon2.SetActive(corazones >= 2);
+        if (corazon3 != null) corazon3.SetActive(corazones >= 3);
     }
 }

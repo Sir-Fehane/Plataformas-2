@@ -25,7 +25,14 @@ public class MetaClass : MonoBehaviour
             PlayerPrefs.SetInt("current_progress", 4);
         }
 
-        SceneManager.LoadScene(1);
+        if (level_select == 1)
+        {
+            SceneManager.LoadScene(7);
+        }
+        else
+        {
+            SceneManager.LoadScene(1);
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
