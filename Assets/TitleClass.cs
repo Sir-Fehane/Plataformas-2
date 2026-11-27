@@ -12,6 +12,10 @@ public class TitleClass : MonoBehaviour
 
     public void botonContinue()
     {
+        if (PlayerPrefs.GetInt("player_lives", 5) <= 0)
+        {
+            PlayerPrefs.SetInt("player_lives", 5);
+        }
         if (PlayerPrefs.HasKey("current_progress"))
         {
             SceneManager.LoadScene(1);
