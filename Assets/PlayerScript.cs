@@ -292,6 +292,27 @@ public class PlayerScript : MonoBehaviour
             }
 
         }
+        if (collision.gameObject.tag == "Bat")
+        {
+            control = false;
+            hit = true;
+            animator.SetInteger("estado", 5);
+            if (sprite.flipX)
+            {
+                rigidbody.linearVelocity = new Vector2(10f, 4f);
+            }
+            else
+            {
+                rigidbody.linearVelocity = new Vector2(-10f, 4f);
+            }
+            corazones--;
+            actualizarUI();
+            if (corazones <= 0)
+            {
+                animator.SetTrigger("delete");
+            }
+
+        }
     }
 
     void OnCollisionStay2D(Collision2D collision)
